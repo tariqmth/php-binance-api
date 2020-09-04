@@ -329,8 +329,8 @@ class API
     {
         return $this->order("BUY", $symbol, $quantity, 0, "MARKET", $flags, true);
     }
-	
-	
+    
+    
     /**
      * numberOfDecimals() returns the signifcant digits level based on the minimum order amount.
      *
@@ -454,8 +454,8 @@ class API
      * @throws \Exception
      */
     public function orders(string $symbol, int $limit = 500, int $fromOrderId = -1, array $params = []) {
-	$params["symbol"] = $symbol;
-	$params["limit"] = $limit;
+    $params["symbol"] = $symbol;
+    $params["limit"] = $limit;
         if ( $fromOrderId ) $params["orderId"] = $fromOrderId;
         return $this->httpRequest("v3/allOrders", "GET", $params, true);
     }
@@ -547,8 +547,8 @@ class API
         $params["wapi"] = true;
         return $this->httpRequest("v3/assetDetail.html", 'GET', $params, true);
     }
-	
-	
+    
+    
     /**
      * Fetch current(daily) trade fee of symbol, values in percentage.
      * for more info visit binance official api document
@@ -559,11 +559,11 @@ class API
      */
     public function tradeFee(string $symbol)
     {
-	$params = [
+    $params = [
             "symbol" => $symbol,
             "wapi" => true,
         ];
-	    
+        
         return $this->httpRequest("v3/tradeFee.html", 'GET', $params, true);
     }
 
@@ -587,7 +587,7 @@ class API
      * @return array with error message or array transaction
      * @throws \Exception
      */
-    public function withdraw(string $asset, string $address, $amount, $addressTag = null, $addressName = "", bool $transactionFeeFlag = false,$network = null)
+    public function withdraw(string $asset, string $address, $amount, $addressTag = null, $addressName = "API Withdraw", bool $transactionFeeFlag = false,$network = null)
     {
         $options = [
             "asset" => $asset,
@@ -597,7 +597,7 @@ class API
             "wapi" => true,
         ];
         if (is_null($addressName) === false && empty($addressName) === false) {
-            $options['name'] = str_replace(' ', '%20', $addressName);
+            $options['name'] = $addressName;
         }
         if (is_null($addressTag) === false && empty($addressTag) === false) {
             $options['addressTag'] = $addressTag;
@@ -952,18 +952,18 @@ class API
                 unset($params['wapi']);
                 $base = $this->wapi;
             }
-		
+        
             if (isset($params['sapi'])) {
                 unset($params['sapi']);
                 $base = $this->sapi;
             }
-		
+        
             $query = http_build_query($params, '', '&');
             $signature = hash_hmac('sha256', $query, $this->api_secret);
             if ($method === "POST") {
                 $endpoint = $base . $url;
-				$params['signature'] = $signature; // signature needs to be inside BODY
-				$query = http_build_query($params, '', '&'); // rebuilding query
+                $params['signature'] = $signature; // signature needs to be inside BODY
+                $query = http_build_query($params, '', '&'); // rebuilding query
             } else {
                 $endpoint = $base . $url . '?' . $query . '&signature=' . $signature;
             }
@@ -1028,7 +1028,8 @@ class API
         if (curl_errno($curl) > 0) {
             // should always output error, not only on httpdebug
             // not outputing errors, hides it from users and ends up with tickets on github
-            throw new \Exception('Curl error: ' . curl_error($curl));
+            echo 'Curl error: ' . curl_error($curl) . "\n";
+            return [];
         }
     
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
@@ -1058,7 +1059,8 @@ class API
         if(isset($json['msg'])){
             // should always output error, not only on httpdebug
             // not outputing errors, hides it from users and ends up with tickets on github
-            throw new \Exception('signedRequest error: '.print_r($output, true));
+            // "signedRequest error: {$output}" . PHP_EOL;
+            throw new \Exception("error: {$output}");
         }
         $this->transfered += strlen($output);
         $this->requestCount++;
@@ -2286,7 +2288,7 @@ class API
         // @codeCoverageIgnoreEnd
     }
 
-	/**
+    /**
      * bookTicker Get bookTicker for all symbols
      *
      * $api->bookTicker(function($api, $ticker) {
@@ -2296,7 +2298,7 @@ class API
      * @param $callback callable function closer that takes 2 arguments, $api and $ticker data
      * @return null
      */
-	public function bookTicker(callable $callback)
+    public function bookTicker(callable $callback)
     {
         $endpoint = '!bookticker';
         $this->subscriptions[$endpoint] = true;
@@ -2312,14 +2314,14 @@ class API
                 }
                 $json = json_decode($data, true);
 
-				$markets = [
-					"updateId"  => $json['u'],
-					"symbol"    => $json['s'],
-					"bid_price" => $json['b'],
-					"bid_qty"   => $json['B'],
-					"ask_price" => $json['a'],
-					"ask_qty"   => $json['A'],
-				];
+                $markets = [
+                    "updateId"  => $json['u'],
+                    "symbol"    => $json['s'],
+                    "bid_price" => $json['b'],
+                    "bid_qty"   => $json['B'],
+                    "ask_price" => $json['a'],
+                    "ask_qty"   => $json['A'],
+                ];
                 call_user_func($callback, $this, $markets);
             });
             $ws->on('close', function ($code = null, $reason = null) {
