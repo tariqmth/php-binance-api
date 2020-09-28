@@ -401,6 +401,28 @@ class API
         return $this->httpRequest("v3/order", "DELETE", array_merge($params, $flags), true);
     }
 
+/**
+     * cancel attempts to cancel an OCO order
+     *
+     * $orderListid = "SDUQyn0NuZsvzuQQsvxMUW";
+     * $order = $api->cancel("BNBBTC", $orderid);
+     *
+     * @param $symbol string the currency symbol
+     * @param $orderListId string the orderListId to cancel
+     * @param $flags array of optional options like ["side"=>"sell"]
+     * @return array with error message or the order details
+     * @throws \Exception
+     */
+    public function cancelOCO(string $symbol, $newClientOrderId, $flags = [])
+    {
+        $params = [
+            "symbol" => $symbol,
+            "newClientOrderId" => $newClientOrderId,
+        ];
+        return $this->httpRequest("v3/order/orderList ", "DELETE", array_merge($params, $flags), true);
+    }
+
+
     /**
      * orderStatus attempts to get orders status
      *
