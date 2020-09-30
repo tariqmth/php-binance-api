@@ -422,6 +422,23 @@ class API
         return $this->httpRequest("v3/order/orderList ", "DELETE", array_merge($params, $flags), true);
     }
 
+    /**
+     * orderStatusOCO attempts to get orders status
+     * of OCO
+     * $orderid = "SDUQyn0NuZsvzuQQsvxMUW";
+     * $order = $api->orderStatusOCO($origClientOrderId);
+     *
+     * @param $origClientOrderId string the orderid to cancel
+     * @return array with error message or the order details
+     * @throws \Exception
+     */
+    public function orderStatusOCO($origClientOrderId)
+    {
+        return $this->httpRequest("v3/order/orderList", "GET", [
+            "origClientOrderId" => $origClientOrderId,
+        ], true);
+    }
+
 
     /**
      * orderStatus attempts to get orders status
