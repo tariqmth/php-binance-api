@@ -1169,8 +1169,13 @@ class API
         if (isset($flags['newOrderRespType'])) {
             $opt['newOrderRespType'] = $flags['newOrderRespType'];
         }
-
-        $qstring = ($test === false) ? "v3/order" : "v3/order/test";
+        if ($type === "LIMIT")
+        {
+            $qstring = ($test === false) ? "v3/order" : "v3/order/test";
+        }else{
+            $qstring = ($test === false) ? "v3/order/oco" : "v3/order/oco/test";
+        }
+        
         return $this->httpRequest($qstring, "POST", $opt, true);
     }
 
