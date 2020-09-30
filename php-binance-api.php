@@ -1158,6 +1158,9 @@ class API
         if (isset($flags['stopPrice'])) {
             $opt['stopPrice'] = $flags['stopPrice'];
         }
+        if (isset($flags['stopLimitPrice'])) {
+            $opt['stopLimitPrice'] = $flags['stopLimitPrice'];
+        }
 
         if (isset($flags['icebergQty'])) {
             $opt['icebergQty'] = $flags['icebergQty'];
